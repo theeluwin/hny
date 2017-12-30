@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>신년카운터</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+    <meta name="fragment" content="!" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:url" content="https://theeluwin.github.io/hny" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="신년카운트" />
+    <meta property="og:description" content="새 해 카운트 다운" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content="theeluwin" />
+    <meta name="twitter:title" content="신년카운터" />
+    <meta name="twitter:description" content="새 해 카운트 다운" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css" />
+    <!--[if lt IE 9]>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+    <div class="container">
+  		<div class="jumbotron text-center">
+  			<h1 id="title"></h1>
+  			<h1 id="time"></h1>
+  		</div>
+  		<footer id="footer" class="text-center">
+  			<h4>created by <a href="https://theeluwin.github.io" target="new">theeluwin</a></h4>
+  		</footer>
+  	</div>
+  	<style>
+  		body { background-repeat: no-repeat; background-size: cover; background-attachment: fixed; background-position: center; padding-top: 70px; }
+  		h1 { font-size: 64px; font-weight: bold; }
+  		.jumbotron { background-color: rgba(238, 238, 238, 0.6); }
+  	</style>
+  	<script>
+  		String.form = function(str, arr) {
+  			var i = -1;
+  			function callback(exp, p0, p1, p2, p3, p4) {
+  				if (exp=='%%') return '%';
+  				if (arr[++i]===undefined) return undefined;
+  				var exp  = p2 ? parseInt(p2.substr(1)) : undefined;
+  				var base = p3 ? parseInt(p3.substr(1)) : undefined;
+  				var val;
+  				switch (p4) {
+  					case 's': val = arr[i]; break;
+  					case 'c': val = arr[i][0]; break;
+  					case 'f': val = parseFloat(arr[i]).toFixed(exp); break;
+  					case 'p': val = parseFloat(arr[i]).toPrecision(exp); break;
+  					case 'e': val = parseFloat(arr[i]).toExponential(exp); break;
+  					case 'x': val = parseInt(arr[i]).toString(base?base:16); break;
+  					case 'd': val = parseFloat(parseInt(arr[i], base?base:10).toPrecision(exp)).toFixed(0); break;
+  				}
+  				val = typeof(val)=='object' ? JSON.stringify(val) : val.toString(base);
+  				var sz = parseInt(p1);
+  				var ch = p1 && p1[0]=='0' ? '0' : ' ';
+  				while (val.length<sz) val = p0 !== undefined ? val+ch : ch+val;
+  				return val;
+  			}
+  			var regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd])/g;
+  			return str.replace(regex, callback);
+  		}
+  		String.prototype.$ = function() {
+  			return String.form(this, Array.prototype.slice.call(arguments));
+  		}
+  		$(document).ready(function(){
+  			function int(i){ return Math.floor(i); }
+  			function idle() {
+  				var now = new Date();
+  				var year = now.getYear() + 1900;
+  				if(now.getMonth() == 0 && now.getDate() == 1) {
+  					$("#title").text("%s년이 되었습니다.".$(year));
+  					$("#time").text("새해 복 많이 받으세요!");
+  				} else {
+  					var next = new Date(year + 1, 0, 1, 0, 0, 0, 0);
+  					var sec = int((next - now) / 1000);
+  					var min = int(sec / 60);
+  					var hour = int(min / 60);
+  					var day = int(hour / 24);
+  					var time = "%02d:%02d:%02d".$(hour % 24, min % 60, sec % 60);
+  					if(day > 0) time = "%d일 ".$(day) + time;
+  					$("#title").text("%s년까지 남은 시간".$(year + 1));
+  					$("#time").text(time);
+  				}
+  			}
+  			setInterval(idle, 333);
+  		});
+  	</script>
+	</body>
+</html>
