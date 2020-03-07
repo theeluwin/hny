@@ -1,100 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>신년카운터</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
-		<meta name="fragment" content="!" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta property="og:url" content="https://theeluwin.github.io/hny" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="신년카운트" />
-		<meta property="og:description" content="새 해 카운트 다운" />
-		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:creator" content="theeluwin" />
-		<meta name="twitter:title" content="신년카운터" />
-		<meta name="twitter:description" content="새 해 카운트 다운" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css" />
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-36051760-14"></script>
-		<script>
-		  window.dataLayer = window.dataLayer || [];
-		  function gtag(){dataLayer.push(arguments);}
-		  gtag('js', new Date());
-		  gtag('config', 'UA-36051760-14');
-		</script>
-		<!--[if lt IE 9]>
-			<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-		<![endif]-->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-	</head>
-	<body>
-		<div class="container">
-			<div class="jumbotron text-center">
-				<h1 id="title"></h1>
-				<h1 id="time"></h1>
-			</div>
-			<footer id="footer" class="text-center">
-				<h4>created by <a href="https://theeluwin.github.io" target="new">theeluwin</a></h4>
-			</footer>
-		</div>
-		<style>
-			body { background-repeat: no-repeat; background-size: cover; background-attachment: fixed; background-position: center; padding-top: 70px; }
-			h1 { font-size: 64px; font-weight: bold; }
-			.jumbotron { background-color: rgba(238, 238, 238, 0.6); }
-		</style>
-		<script>
-			String.form = function(str, arr) {
-				var i = -1;
-				function callback(exp, p0, p1, p2, p3, p4) {
-					if (exp=='%%') return '%';
-					if (arr[++i]===undefined) return undefined;
-					var exp	= p2 ? parseInt(p2.substr(1)) : undefined;
-					var base = p3 ? parseInt(p3.substr(1)) : undefined;
-					var val;
+  <head>
+    <title>신년카운터</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
+    <meta name="fragment" content="!" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:url" content="https://theeluwin.github.io/hny" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="신년카운트" />
+    <meta property="og:description" content="새 해 카운트 다운" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content="theeluwin" />
+    <meta name="twitter:title" content="신년카운터" />
+    <meta name="twitter:description" content="새 해 카운트 다운" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-36051760-14"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag(){dataLayer.push(arguments)}
+      gtag('js', new Date())
+      gtag('config', 'UA-36051760-14')
+    </script>
+    <!--[if lt IE 9]>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+      body {
+        padding-top: 70px;
+      }
+      h1 {
+        font-size: 64px;
+        font-weight: bold;
+      }
+      .jumbotron {
+        background-color: rgba(238, 238, 238, 0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="jumbotron text-center">
+          <h1 id="title">{{ title }}</h1>
+          <h1 id="time">{{ time_left }}</h1>
+        </div>
+        <footer id="footer" class="text-center">
+          <h4>created by <a href="https://theeluwin.github.io" target="new">theeluwin</a></h4>
+        </footer>
+      </div>
+    </div>
+    <script>
+      String.format = function(str, arr) {
+				let i = -1
+				let callback = function(exp, p0, p1, p2, p3, p4) {
+          if(exp === '%%') {
+            return '%'
+          }
+					if(arr[++i] === undefined) {
+            return undefined
+          }
+				  exp	= p2? parseInt(p2.substr(1)) : undefined
+					let base = p3? parseInt(p3.substr(1)) : undefined
+				  let value = null
 					switch (p4) {
-						case 's': val = arr[i]; break;
-						case 'c': val = arr[i][0]; break;
-						case 'f': val = parseFloat(arr[i]).toFixed(exp); break;
-						case 'p': val = parseFloat(arr[i]).toPrecision(exp); break;
-						case 'e': val = parseFloat(arr[i]).toExponential(exp); break;
-						case 'x': val = parseInt(arr[i]).toString(base?base:16); break;
-						case 'd': val = parseFloat(parseInt(arr[i], base?base:10).toPrecision(exp)).toFixed(0); break;
+						case 's':
+              value = arr[i]
+              break
+						case 'c':
+              value = arr[i][0]
+              break
+						case 'f':
+              value = parseFloat(arr[i]).toFixed(exp)
+              break
+						case 'p':
+              value = parseFloat(arr[i]).toPrecision(exp)
+              break
+						case 'e':
+              value = parseFloat(arr[i]).toExponential(exp)
+              break
+						case 'x':
+              value = parseInt(arr[i]).toString(base? base : 16)
+              break
+						case 'd':
+              value = parseFloat(parseInt(arr[i], base? base : 10).toPrecision(exp)).toFixed(0)
+              break
 					}
-					val = typeof(val)=='object' ? JSON.stringify(val) : val.toString(base);
-					var sz = parseInt(p1);
-					var ch = p1 && p1[0]=='0' ? '0' : ' ';
-					while (val.length<sz) val = p0 !== undefined ? val+ch : ch+val;
-					return val;
+					value = typeof(value) === 'object'? JSON.stringify(value) : value.toString(base)
+					let sz = parseInt(p1)
+					let ch = p1 && p1[0] === '0'? '0' : ' '
+					while(value.length < sz) {
+            value = p0 !== undefined? value + ch : ch + value
+          }
+					return value
 				}
-				var regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd])/g;
-				return str.replace(regex, callback);
+				let regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd])/g
+				return str.replace(regex, callback)
 			}
 			String.prototype.$ = function() {
-				return String.form(this, Array.prototype.slice.call(arguments));
+				return String.format(this, Array.prototype.slice.call(arguments))
 			}
-			$(document).ready(function(){
-				function int(i){ return Math.floor(i); }
-				function idle() {
-					var now = new Date();
-					var year = now.getYear() + 1900;
-					if(now.getMonth() == 0 && now.getDate() == 1) {
-						$("#title").text("%s년이 되었습니다.".$(year));
-						$("#time").text("새해 복 많이 받으세요!");
-					} else {
-						var next = new Date(year + 1, 0, 1, 0, 0, 0, 0);
-						var sec = int((next - now) / 1000);
-						var min = int(sec / 60);
-						var hour = int(min / 60);
-						var day = int(hour / 24);
-						var time = "%02d:%02d:%02d".$(hour % 24, min % 60, sec % 60);
-						if(day > 0) time = "%d일 ".$(day) + time;
-						$("#title").text("%s년까지 남은 시간".$(year + 1));
-						$("#time").text(time);
-					}
-				}
-				setInterval(idle, 333);
-			});
-		</script>
-	</body>
+      let app = new Vue({
+        el: '#app',
+        data () {
+          return {
+            title: "",
+            time_left: ""
+          }
+        },
+        methods: {
+          idle () {
+            let now = new Date()
+            let year = now.getYear() + 1900
+            if(now.getMonth() === 0 && now.getDate() === 1) {
+              this.title = "%d년이 되었습니다.".$(year)
+              this.time_left = "새해 복 많이 받으세요!"
+            } else {
+              let next_year = new Date(year + 1, 0, 1, 0, 0, 0, 0)
+              let sec = parseInt((next_year - now) / 1000)
+              let min = parseInt(sec / 60)
+              let hour = parseInt(min / 60)
+              let day = parseInt(hour / 24)
+              let time_left = "%02d:%02d:%02d".$(hour % 24, min % 60, sec % 60)
+              if(day > 0) {
+                time_left = "%d일 ".$(day) + time_left
+              }
+              this.title = "%d년까지 남은 시간".$(year + 1)
+              this.time_left = time_left
+            }
+          }
+        },
+        mounted: function () {
+          this.$nextTick(function () {
+            setInterval(this.idle, 333)
+          })
+        }
+      })
+    </script>
+  </body>
 </html>
